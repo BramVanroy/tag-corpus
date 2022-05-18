@@ -38,16 +38,19 @@ def parse(args: Namespace):
         raise ValueError("'input_str' or 'input_item' must be given")
 
     # Only select the required components for optimal speed
-    exclude_spacy_components = ["ner", "lemmatizer"]
+    exclude_spacy_components = ["ner"]
     stanza_processors = {}
     if args.vendor == "spacy":
+        if "lemma" not in args.formatter:
+            exclude_spacy_components.append("lemmatizer")
         if "pos" not in args.formatter:
             exclude_spacy_components.append("tagger")
         if "dep" not in args.formatter and args.disable_sbd:
             exclude_spacy_components.append("parser")
     else:
         stanza_processors = ["tokenize"]
-
+        if "lemma" in args.formatter:
+            stanza_processors.append("lemma")
         if "pos" in args.formatter:
             stanza_processors.append("pos")
         if "dep" in args.formatter:  # depparse requires pos and lemma components
@@ -63,7 +66,7 @@ def parse(args: Namespace):
     if args.vendor == "spacy":
         args.formatter = ["text" if attr == "text" else f"{attr}_" for attr in args.formatter]
     else:
-        mapping = {"text": "text", "pos": "upos", "dep": "deprel"}
+        mapping = {"text": "text", "lemma": "lemma", "pos": "upos", "dep": "deprel"}
         args.formatter = [mapping[attr] for attr in args.formatter]
 
     # Prepare data and run parser
@@ -145,10 +148,11 @@ def main():
 
     cparser.add_argument("--formatter",
                          nargs="+",
-                         choices=["text", "pos", "dep"],
+                         choices=["text", "pos", "dep", "lemma"],
                          default=["text"],
                          help="The properties of tokens to write to the output file, separate by 'formatter_sep'."
-                              " So for instance, 'dog|noun|subj. By default, it only tokenizes, e.g. 'dog'")
+                              " So for instance, for '--formatter text pos dep' -> 'dog|noun|subj. By default, it only"
+                              " tokenizes, e.g. 'dog'")
     cparser.add_argument("--formatter_sep", default="|", help="The separator to use in conjunction with 'format'.")
 
     cparser.add_argument(

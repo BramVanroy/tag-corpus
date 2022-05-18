@@ -47,8 +47,9 @@ input directory will be used. If not given, will only print to stdout
 - `-c`, `--output_encoding`: encoding of the output file(s) (defaults to system default)
 - `-v`, `--verbose`: if enabled, always prints the output to stdout - even if `--output_item` is given
 - `--formatter`: the format of the output tokens. You can add multiple arguments here but have to choose from `text`,
-`pos` and `dep`. The order matters! In the output, these properties for each token will be extracted and glued together 
-with `formatter_sep`. E.g., for `--formatter text pos dep` the result for a dog as subject could be `dog|NOUN|nsubj`
+`lemma`, `pos` and `dep`. The order matters! In the output, these properties for each token will be extracted and 
+glued together with `formatter_sep`. E.g., for `--formatter text pos dep` the result for a dog as subject could be
+`dog|NOUN|nsubj`
 - `--formatter_sep`: if you want a different separator than the default `|` (see `--formatter`)
 
 ## Examples
